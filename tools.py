@@ -20,16 +20,20 @@ async def newTask(title: str, description: str):
 @tool 
 async def readTasks():
     """
-    Reads all the tasks from database
-    """
+        Reads all the tasks from the database. 
+        Returns data formatted strictly as: - Title: Description (Completed: True/False)
+        """
     with SessionLocal() as db:
         tasks = read_tasks(db=db)
         
     # Format database models as simple strings for the LLM to read cleanly
     task_strings = [f"- {t.title}: {t.description} (Completed: {t.completed})" for t in tasks]
     return "\n".join(task_strings) if task_strings else "No tasks found."
-    
-    
+
+
+
+
+
 @tool
 async def TaskUpdate(title: str, completed: bool):
     """

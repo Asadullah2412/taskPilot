@@ -75,8 +75,6 @@ async def run_agent(question: str):
 
 # 3. Use asyncio.run() to execute the async function at the bottom of your file
 asyncio.run(
-    run_agent( " mark all tasks as completed "
-              "What tasks do I have today, and if there aren't any, create a task to clean aqurarium "
-                "also give me all the tasks i have perfomed today too "
+    run_agent("Code TypeScript is completed mark "
               )
 )

@@ -8,9 +8,8 @@ class TaskCreate(BaseModel):
     description:str|None = Field(default=None,max_length=2000)
     
 class updateTask(BaseModel):
-    title:str = Field(min_length=1,max_length=250)
-    # description:str|None = Field(default=None,max_length=2000)
-    completed:bool|None=None
+    title: str = Field(description="The exact title of the task (do NOT include the description text)")
+    completed: bool = Field(description="True if completed, False otherwise")
 
 class deleteTask(BaseModel):
     title:str = Field(min_length=1,max_length=250)
