@@ -9,7 +9,7 @@ class TaskCreate(BaseModel):
     
 class updateTask(BaseModel):
     title:str = Field(min_length=1,max_length=250)
-    description:str|None = Field(default=None,max_length=2000)
+    # description:str|None = Field(default=None,max_length=2000)
     completed:bool|None=None
 
 class deleteTask(BaseModel):
