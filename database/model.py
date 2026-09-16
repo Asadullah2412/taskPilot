@@ -1,10 +1,10 @@
 from sqlalchemy import Boolean,Column,ForeignKey,Integer,String,Text,DateTime,func
 from sqlalchemy.orm import Mapped, mapped_column
-from database_setup import Base
+from database.database_setup import Base
 from datetime import datetime
 from uuid_utils.compat import uuid7
 import uuid
-from database_setup import Base
+
 
 class Task(Base):
     __tablename__ = "Tasks"

@@ -1,19 +1,15 @@
-import uuid
-from collections.abc import Sequence
+from sqlalchemy.orm import Session
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from schemas import TaskCreate,updateTask,deleteTask
-from model import Task
+from database.schemas import TaskCreate, updateTask, deleteTask
+from database.model import Task
 
-from dependencies import db_dependency
-
-# creating a new task
-async def create_task(data:TaskCreate,db=db_dependency):
-    # check
+# Creating a new task
+def create_task(data: TaskCreate, db: Session):
+    # Synchronous query check
     if db.scalars(select(Task).where(Task.title == data.title)).first():
         return "Task is already present"
 
-    task = Task(title=data.title,description=data.description)
+    task = Task(title=data.title, description=data.description)
     db.add(task)
     db.commit()
     db.refresh(task)
@@ -21,29 +17,28 @@ async def create_task(data:TaskCreate,db=db_dependency):
 
 
 # Reading all tasks
-async def read_tasks(db:db_dependency):
-    tasks = db.scalars(select(Task)).all()
-    return tasks
+def read_tasks(db: Session):
+    # Pure synchronous call
+    return db.scalars(select(Task)).all()
 
-# updating tasks
-async def update_task(data:updateTask,db:db_dependency):
-    task = db.get(Task,data.title)
+
+# Updating tasks
+def update_task(data: updateTask, db: Session):
+    task = db.query(Task).filter(Task.title == data.title).first()
     if not task:
         return "task not found"
 
     task.completed = data.completed
+    db.commit()
     return True
 
 
-# delete task
-async def delete_task(data:deleteTask,db:db_dependency):
-    task = db.get(Task,data.title)
-
+# Delete task
+def delete_task(data: deleteTask, db: Session):
+    task = db.query(Task).filter(Task.title == data.title).first()
     if not task:
         return "task is not present"
 
     db.delete(task)
     db.commit()
     return True
-
-
