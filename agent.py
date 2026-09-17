@@ -11,7 +11,8 @@ load_dotenv()
 
 
 model = ChatOpenRouter(
-    model= 'liquid/lfm-2.5-2.6b:free',
+    # model= 'liquid/lfm-2.5-2.6b:free', // change the model as per availabilty
+    model = "inclusionai/ling-3.0-flash-sante:free"
 )
 
 agent = create_agent(
@@ -74,7 +75,12 @@ async def run_agent(question: str):
 
 
 # 3. Use asyncio.run() to execute the async function at the bottom of your file
+# asyncio.run(
+#     run_agent("today im planing to play football , then go for a dinner and take a bath and have a good sleep ,add these tasks "
+#               )
+# )
+
 asyncio.run(
-    run_agent("Code TypeScript is completed mark "
+    run_agent("i have played football , took a bath and ate dinner and i am going to sleep and also i have done typescript too so remove these tasks "
               )
 )

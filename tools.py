@@ -5,20 +5,24 @@ from database.schemas import TaskCreate, deleteTask, updateTask
 from database.database_setup import SessionLocal 
 
 @tool
-async def newTask(title: str, description: str):
+def newTask(title: str, description: str):
     """
-    Add a new Task
+    Add a new task.
     """
-    # Open a clean synchronous database connection session
-    with SessionLocal() as db:
-        newTask_data = TaskCreate(title=title, description=description)
-        result = create_task(data=newTask_data, db=db)
-    
-    return f"Task '{title}' has been successfully created."
 
+    with SessionLocal() as db:
+        newTask_data = TaskCreate(
+            title=title,
+            description=description
+        )
+
+        return create_task(
+            data=newTask_data,
+            db=db
+        )
 
 @tool 
-async def readTasks():
+def readTasks():
     """
         Reads all the tasks from the database. 
         Returns data formatted strictly as: - Title: Description (Completed: True/False)
@@ -26,16 +30,24 @@ async def readTasks():
     with SessionLocal() as db:
         tasks = read_tasks(db=db)
         
-    # Format database models as simple strings for the LLM to read cleanly
-    task_strings = [f"- {t.title}: {t.description} (Completed: {t.completed})" for t in tasks]
-    return "\n".join(task_strings) if task_strings else "No tasks found."
+    
+    task_strings = [
+       {
+           "id": str(t.id),
+           "title": t.title,
+           "description": t.description,
+           "completed": t.completed
+       }
+       for t in tasks
+   ]
+    return task_strings
 
 
 
 
 
 @tool
-async def TaskUpdate(title: str, completed: bool):
+def TaskUpdate(title: str, completed: bool):
     """
     Updates task as completed as True or False
     """
@@ -47,15 +59,15 @@ async def TaskUpdate(title: str, completed: bool):
 
 
 @tool
-async def taskDelete(title: str):
+def taskDelete(id: str):
     """
-    Deletes a task
+    Deletes a task using id 
     """
     with SessionLocal() as db:
-        task_data = deleteTask(title=title)
+        task_data = deleteTask(id=id)
         result = delete_task(data=task_data, db=db)
         
-    return f"Delete status for '{title}': {result}"
+    return f"Delete status for '{id}': {result}"
 
 
 tools = [newTask, TaskUpdate, readTasks, taskDelete]

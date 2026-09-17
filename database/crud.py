@@ -5,15 +5,34 @@ from database.model import Task
 
 # Creating a new task
 def create_task(data: TaskCreate, db: Session):
-    # Synchronous query check
-    if db.scalars(select(Task).where(Task.title == data.title)).first():
-        return "Task is already present"
+    existing_task = db.scalars(
+        select(Task).where(Task.title == data.title)
+    ).first()
 
-    task = Task(title=data.title, description=data.description)
+    if existing_task:
+        return {
+            "success": False,
+            "error": "TASK_ALREADY_EXISTS",
+            "task_id": str(existing_task.id),
+            "title": existing_task.title
+        }
+
+    task = Task(
+        title=data.title,
+        description=data.description
+    )
+
     db.add(task)
     db.commit()
     db.refresh(task)
-    return task
+
+    return {
+        "success": True,
+        "task_id": str(task.id),
+        "title": task.title,
+        "description": task.description,
+        "completed": task.completed
+    }
 
 
 # Reading all tasks
@@ -24,7 +43,7 @@ def read_tasks(db: Session):
 
 # Updating tasks
 def update_task(data: updateTask, db: Session):
-    task = db.query(Task).filter(Task.title == data.title).first()
+    task = db.query(Task).filter(Task.id == data.id).first()
     if not task:
         return "task not found"
 
@@ -35,7 +54,7 @@ def update_task(data: updateTask, db: Session):
 
 # Delete task
 def delete_task(data: deleteTask, db: Session):
-    task = db.query(Task).filter(Task.title == data.title).first()
+    task = db.query(Task).filter(Task.id == data.id).first()
     if not task:
         return "task is not present"
 
